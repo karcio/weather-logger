@@ -1,7 +1,0 @@
-{'id': 'TTT', 'unit': 'celsius', 'value': '7.7'}
-{'id': 'ff', 'mps': '6.4', 'beaufort': '4', 'name': 'Laber bris'}
-{'unit': 'percent', 'value': '87.1'}
-{'id': 'pr', 'unit': 'hPa', 'value': '1024.7'}
-{'id': 'FOG', 'percent': '0.8'}
-{'unit': 'mm', 'value': '0.0'}
-{'id': 'Cloud', 'number': '4', 'code': 'cloudy'}
