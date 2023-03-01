@@ -5,6 +5,7 @@ import logging
 import time
 from datetime import datetime
 
+
 logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=logging.INFO)
 
 reqUrl = "https://api.met.no/weatherapi/locationforecast/2.0/classic?lat=53.34&lon=-6.54&altitude=90"
@@ -89,4 +90,4 @@ while True:
     except:
         logging.error('no database connection ...')
 
-    time.sleep(60)
+    time.sleep(300)
