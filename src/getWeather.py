@@ -78,7 +78,7 @@ while True:
             user=DBUSER, password=DBPASSWORD, host=HOST, port=PORT, database=DATABASE)
         cursor = connection.cursor()
 
-        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, israin, issnow, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
+        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
             data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
 
         logging.info('start ingestion ...')
