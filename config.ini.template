@@ -1,0 +1,12 @@
+[database]
+host = 1
+port = 
+database = 
+username = 
+password = 
+
+[url]
+endpoint = api.met.no/weatherapi/locationforecast/2.0/classic?
+long = 
+lat = 
+alt = 
