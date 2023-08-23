@@ -54,6 +54,10 @@ while True:
         else:
             snow = 0
 
+        if symbol.lower() == "sun":
+            sun = 1
+        else:
+            sun = 0
 
         data = { 
             "temperature": temperature,
@@ -64,6 +68,7 @@ while True:
             "precipitation": precipitation,
             "isRain" : rain,
             "isSnow" : snow,
+            "isSun" : sun,
             "city": city
         }
 
@@ -78,8 +83,8 @@ while True:
             user=DBUSER, password=DBPASSWORD, host=HOST, port=PORT, database=DATABASE)
         cursor = connection.cursor()
 
-        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
-            data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
+        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
+            data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['isSun']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
 
         logging.info('start ingestion ...')
         cursor.execute(sql)
