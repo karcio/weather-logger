@@ -4,28 +4,37 @@ import xml.etree.ElementTree as ET
 import logging
 import time
 from datetime import datetime
+import configparser
 
 
 logging.basicConfig(format='%(asctime)s - %(levelname)s: %(message)s', level=logging.INFO)
 
-reqUrl = "https://api.met.no/weatherapi/locationforecast/2.0/classic?lat=53.34&lon=-6.54&altitude=90"
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+db_config = config['database']
+db_host = db_config['host']
+db_port = db_config['port']
+db_name = db_config['database']
+db_username = db_config['username']
+db_password = db_config['password']
+
+url_config = config['url']
+url_endpoint = url_config['endpoint']
+url_long = url_config['long']
+url_lat = url_config['lat']
+url_alt = url_config['alt']
+
+reqUrl = "https://"+ url_endpoint +"lat="+ url_lat +"&lon="+ url_long +"&altitude="+ url_alt +""
 city = "Celbridge"
 locationEndPoint = './product/time/location/'
-
-# headersList = {
-#     "Accept": "*/*",
-#     "User-Agent": "Thunder Client (https://www.thunderclient.com)"
-# }
-
-headersList = {}
-
+#headersList = {}
+headersList = {
+    "Accept": "*/*",
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+}
 payload = ""
 
-HOST = ""
-PORT = ""
-DATABASE = ""
-DBUSER = ""
-DBPASSWORD = ""
 
 def getComponent(name, endPoint, keyword):
     response = requests.request("GET", reqUrl, data=payload,  headers=headersList)
@@ -44,18 +53,20 @@ while True:
         precipitation = getComponent('precipitation', locationEndPoint, 'value')
         symbol = getComponent('symbol', locationEndPoint, 'code')
 
-        if symbol.lower() == "rain" or symbol.lower() == "drizzle":
-            rain = 1
-        else:
-            rain = 0
+        weather_mappings = {
+            "rain": ["rain", "lightrain", "lightrainshowers_day", "rainshowers_day", "heavyrain", "heavyrainshowers_day"],
+            "snow": ["snow"],
+            "sun": ["sun", "clearsky_day"]
+        }
 
-        if symbol.lower() == "snow":
-            snow = 1
-        else:
-            snow = 0
+        symbol_lower = symbol.lower()
 
+        rain = 1 if any(cond in symbol_lower for cond in weather_mappings["rain"]) else 0
+        snow = 1 if any(cond in symbol_lower for cond in weather_mappings["snow"]) else 0
+        sun = 1 if any(cond in symbol_lower for cond in weather_mappings["sun"]) else 0
 
         data = { 
+            "details": symbol,
             "temperature": temperature,
             "windSpeed": windSpeed,
             "humidity": humidity,
@@ -64,22 +75,24 @@ while True:
             "precipitation": precipitation,
             "isRain" : rain,
             "isSnow" : snow,
+            "isSun" : sun,
             "city": city
         }
 
         logging.info(data)
         logging.info('data received ...')
-    except:
+    except Exception as e:
+        print(f"An error occurred: {e}")
         logging.error('no response from api ...')
 
     try:
         logging.info('connection to database ...')
         connection = psycopg2.connect(
-            user=DBUSER, password=DBPASSWORD, host=HOST, port=PORT, database=DATABASE)
+            user=db_username, password=db_password, host=db_host, port=db_port, database=db_name)
         cursor = connection.cursor()
 
-        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
-            data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
+        sql = "insert into readings (details, temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) values ('" + str(data['details']) + "','" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
+            data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['isSun']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
 
         logging.info('start ingestion ...')
         cursor.execute(sql)
@@ -87,7 +100,8 @@ while True:
         cursor.close()
         connection.close()
         logging.info('ingestion done ...')
-    except:
+    except Exception as e:
+        print(f"An error occurred: {e}")
         logging.error('no database connection ...')
 
     time.sleep(300)
