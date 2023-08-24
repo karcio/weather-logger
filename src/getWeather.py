@@ -66,6 +66,7 @@ while True:
         sun = 1 if any(cond in symbol_lower for cond in weather_mappings["sun"]) else 0
 
         data = { 
+            "details": symbol,
             "temperature": temperature,
             "windSpeed": windSpeed,
             "humidity": humidity,
@@ -90,7 +91,7 @@ while True:
             user=db_username, password=db_password, host=db_host, port=db_port, database=db_name)
         cursor = connection.cursor()
 
-        sql = "insert into readings (temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) values ('" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
+        sql = "insert into readings (details, temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) values ('" + str(data['details']) + "','" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
             data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['isSun']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
 
         logging.info('start ingestion ...')
