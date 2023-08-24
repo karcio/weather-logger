@@ -28,7 +28,11 @@ url_alt = url_config['alt']
 reqUrl = "https://"+ url_endpoint +"lat="+ url_lat +"&lon="+ url_long +"&altitude="+ url_alt +""
 city = "Celbridge"
 locationEndPoint = './product/time/location/'
-headersList = {}
+#headersList = {}
+headersList = {
+    "Accept": "*/*",
+    "User-Agent": "Thunder Client (https://www.thunderclient.com)"
+}
 payload = ""
 
 
@@ -76,7 +80,8 @@ while True:
 
         logging.info(data)
         logging.info('data received ...')
-    except:
+    except Exception as e:
+        print(f"An error occurred: {e}")
         logging.error('no response from api ...')
 
     try:
@@ -94,7 +99,8 @@ while True:
         cursor.close()
         connection.close()
         logging.info('ingestion done ...')
-    except:
+    except Exception as e:
+        print(f"An error occurred: {e}")
         logging.error('no database connection ...')
 
     time.sleep(300)
