@@ -56,7 +56,7 @@ while True:
         weather_mappings = {
             "rain": ["rain", "lightrain", "lightrainshowers_day", "rainshowers_day", "heavyrain", "heavyrainshowers_day"],
             "snow": ["snow"],
-            "sun": ["sun", "clearsky_day"]
+            "sun": ["sun", "clearsky_day","fair_day"]
         }
 
         symbol_lower = symbol.lower()
