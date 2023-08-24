@@ -56,7 +56,7 @@ while True:
         weather_mappings = {
             "rain": ["rain", "lightrain", "lightrainshowers_day", "rainshowers_day", "heavyrain", "heavyrainshowers_day"],
             "snow": ["snow"],
-            "sun": ["sun", "clearsky_day"]
+            "sun": ["sun", "clearsky_day","fair_day"]
         }
 
         symbol_lower = symbol.lower()
@@ -91,11 +91,25 @@ while True:
             user=db_username, password=db_password, host=db_host, port=db_port, database=db_name)
         cursor = connection.cursor()
 
-        sql = "insert into readings (details, temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) values ('" + str(data['details']) + "','" + str(data['temperature']) + "', '" + str(data['windSpeed']) + "', '" + str(
-            data['humidity']) + "', '" + str(data['pressure']) + "', '" + str(data['fog']) + "', '" + str(data['precipitation']) + "', '" + str(data['isRain']) + "', '" + str(data['isSnow']) + "', '" + str(data['isSun']) + "', '" + str(data['city']) + "', '" + datetime.now().isoformat() + "')"
+        sql = "INSERT INTO readings (details, temperature, windspeed, humidity, pressure, fog, precipitation, is_rain, is_snow, is_sun, city, lastupdate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-        logging.info('start ingestion ...')
-        cursor.execute(sql)
+        values = (
+            data['details'],
+            data['temperature'],
+            data['windSpeed'],
+            data['humidity'],
+            data['pressure'],
+            data['fog'],
+            data['precipitation'],
+            data['isRain'],
+            data['isSnow'],
+            data['isSun'],
+            data['city'],
+            datetime.now().isoformat(),
+        )
+
+        logging.info('start ingestion ...')     
+        cursor.execute(sql, values)
         connection.commit()
         cursor.close()
         connection.close()
