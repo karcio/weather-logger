@@ -36,3 +36,24 @@ pip install -r requirements.txt
 ```
 python src/getWeather.py
 ```
+
+## Docker
+
+1. build image
+
+```
+docker image build -t karcio/weather-logger .
+
+```
+
+2. run docker container
+
+```
+docker run -d --name=weather-logger --restart unless-stopped karcio/weather-logger
+```
+
+3. see logs
+
+```
+docker logs -f weather-logger
+```
